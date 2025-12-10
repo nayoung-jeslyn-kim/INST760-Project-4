@@ -16,6 +16,7 @@ df['Sample ID'] = range(1, len(df) + 1)
 # Initialize Dash app
 # ------------------------------
 app = dash.Dash(__name__)
+server = app.server 
 app.title = "Interactive Sleep & Lifestyle Story Dashboard"
 
 # ------------------------------
