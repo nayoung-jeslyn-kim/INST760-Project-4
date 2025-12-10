@@ -5,7 +5,7 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 
 # Load dataset
-df = pd.read_csv('/kaggle/input/sleep-health-and-lifestyle-dataset/Sleep_health_and_lifestyle_dataset.csv')
+df = pd.read_csv('Sleep_health_and_lifestyle_dataset.csv')
 
 # Initialize Dash app
 app = dash.Dash(__name__)
