@@ -1,8 +1,7 @@
 import pandas as pd
 import plotly.express as px
 import dash
-from dash import dcc, html
-from dash.dependencies import Input, Output
+from dash import dcc, html, Input, Output
 
 # Load dataset
 df = pd.read_csv('Sleep_health_and_lifestyle_dataset.csv')
