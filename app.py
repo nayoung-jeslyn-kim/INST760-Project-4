@@ -14,10 +14,9 @@ df['Sample ID'] = range(1, len(df) + 1)
 # Dash App
 # ------------------------------
 app = dash.Dash(__name__)
-server = app.server
 app.title = "Unified Sleep & Lifestyle Dashboard"
 
-# Reusable card style
+# Card style for clean layout
 card_style = {
     'backgroundColor': 'white',
     'padding': '20px',
@@ -38,9 +37,7 @@ app.layout = html.Div([
                 'fontFamily': 'Inter, sans-serif'
             }),
 
-    # ---------------------------------------------------------
-    # FILTER BAR (Top Section)
-    # ---------------------------------------------------------
+    # ---------------------- FILTER BAR ----------------------
     html.Div([
         html.Div([
             html.Label("Sleep Duration Filter", style={'fontWeight': '600'}),
@@ -79,17 +76,19 @@ app.layout = html.Div([
         ])
     ], style={**card_style}),
 
-    # ---------------------------------------------------------
-    # 2×2 Modern Grid Layout for Plots
-    # ---------------------------------------------------------
+    # ---------------------- PLOT GRID ----------------------
     html.Div([
-        # Row 1
-        html.Div(dcc.Graph(id='plot-overview'), style={**card_style, 'width': '49%', 'display': 'inline-block'}),
-        html.Div(dcc.Graph(id='plot-stress'), style={**card_style, 'width': '49%', 'display': 'inline-block', 'marginLeft': '2%'}),
+        html.Div(dcc.Graph(id='plot-overview'),
+                 style={**card_style, 'width': '49%', 'display': 'inline-block'}),
 
-        # Row 2
-        html.Div(dcc.Graph(id='plot-activity'), style={**card_style, 'width': '49%', 'display': 'inline-block'}),
-        html.Div(dcc.Graph(id='plot-comprehensive'), style={**card_style, 'width': '49%', 'display': 'inline-block', 'marginLeft': '2%'}),
+        html.Div(dcc.Graph(id='plot-stress'),
+                 style={**card_style, 'width': '49%', 'display': 'inline-block', 'marginLeft': '2%'}),
+
+        html.Div(dcc.Graph(id='plot-activity'),
+                 style={**card_style, 'width': '49%', 'display': 'inline-block'}),
+
+        html.Div(dcc.Graph(id='plot-comprehensive'),
+                 style={**card_style, 'width': '49%', 'display': 'inline-block', 'marginLeft': '2%'}),
     ])
 ], style={
     'maxWidth': '1300px',
@@ -117,7 +116,7 @@ def filter_df(df, stress=None, activity=None, sleep_range=None):
 
 
 # ------------------------------
-# Callback (All plots)
+# Callback for ALL PLOTS
 # ------------------------------
 @app.callback(
     [
@@ -138,7 +137,7 @@ def update_all_plots(sleep_range, selected_stress, selected_activity):
                          stress=selected_stress,
                          activity=selected_activity)
 
-    # 1. Overview Histogram
+    # -------------------- Plot 1: Overview Histogram --------------------
     fig1 = px.histogram(
         filtered, x='Sleep Duration', nbins=20,
         title='Sleep Duration Distribution',
@@ -146,7 +145,7 @@ def update_all_plots(sleep_range, selected_stress, selected_activity):
     )
     fig1.update_layout(bargap=0.25, template='simple_white')
 
-    # 2. Stress Scatter
+    # -------------------- Plot 2: Stress Scatter --------------------
     fig2 = px.scatter(
         filtered, x='Sleep Duration', y='Quality of Sleep',
         color='Stress Level', size='Stress Level',
@@ -155,21 +154,26 @@ def update_all_plots(sleep_range, selected_stress, selected_activity):
     )
     fig2.update_layout(template='simple_white')
 
-    # 3. Activity Scatter
-    fig3 = px.scatter(
-        filtered, x='Sleep Duration', y='Quality of Sleep',
-        color='Physical Activity Level', size='Stress Level',
-        title='Sleep vs Quality by Activity Level',
-        hover_data=['Stress Level']
+    # -------------------- Plot 3: Activity — Box Plot (NEW) --------------------
+    fig3 = px.box(
+        filtered,
+        x='Physical Activity Level',
+        y='Sleep Duration',
+        color='Physical Activity Level',
+        title='Sleep Duration Distribution by Physical Activity Level',
+        points='all'
     )
     fig3.update_layout(template='simple_white')
 
-    # 4. Comprehensive Overview
-    fig4 = px.scatter(
-        filtered, x='Sleep Duration', y='Quality of Sleep',
-        color='Physical Activity Level', size='Stress Level',
-        title='Comprehensive: Sleep vs Quality',
-        hover_data=['Sample ID', 'Stress Level', 'Physical Activity Level']
+    # -------------------- Plot 4: Comprehensive — Density Heatmap (NEW) --------------------
+    fig4 = px.density_heatmap(
+        filtered,
+        x='Sleep Duration',
+        y='Quality of Sleep',
+        z=None,
+        histfunc='count',
+        color_continuous_scale='Viridis',
+        title='Comprehensive Density Heatmap: Sleep vs Quality'
     )
     fig4.update_layout(template='simple_white')
 
