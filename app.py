@@ -10,14 +10,14 @@ df = pd.read_csv('Sleep_health_and_lifestyle_dataset.csv')
 df.columns = df.columns.str.strip()
 
 # For animation demo, create a pseudo time variable
+# (assuming dataset has no time column; if there is, use it)
 df['Sample ID'] = range(1, len(df)+1)
 
 # ------------------------------
 # Initialize Dash app
 # ------------------------------
 app = dash.Dash(__name__)
-server = app.server 
-
+server = app.server
 app.title = "Interactive Sleep & Lifestyle Story Dashboard"
 
 # ------------------------------
@@ -26,6 +26,7 @@ app.title = "Interactive Sleep & Lifestyle Story Dashboard"
 app.layout = html.Div([
     html.H1("Sleep & Lifestyle Interactive Story Dashboard", style={'textAlign': 'center', 'marginBottom': '20px'}),
     
+    # Tabs
     dcc.Tabs([
         dcc.Tab(label='Overview', children=[
             html.Div([
@@ -151,7 +152,7 @@ def update_activity(selected_activity):
     fig = px.scatter(
         filtered, x='Sleep Duration', y='Quality of Sleep',
         color='Physical Activity Level', size='Stress Level',
-        animation_frame='Sample ID',
+        animation_frame='Sample ID',  # 애니메이션 프레임
         title='Quality of Sleep vs Sleep Duration (Animated by Sample)',
         hover_data=['Stress Level']
     )
@@ -177,7 +178,7 @@ def update_comprehensive(selected_stress, selected_activity):
     return fig
 
 # ------------------------------
-# Local Run
+# Run server
 # ------------------------------
 if __name__ == '__main__':
     app.run_server(debug=True)
