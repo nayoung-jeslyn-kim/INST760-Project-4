@@ -14,6 +14,7 @@ df['Sample ID'] = range(1, len(df) + 1)
 # Dash App
 # ------------------------------
 app = dash.Dash(__name__)
+server = app.server
 app.title = "Unified Sleep & Lifestyle Dashboard"
 
 # Card style for clean layout
